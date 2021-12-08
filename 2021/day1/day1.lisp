@@ -6,5 +6,5 @@
     when b count (< a b)))
 
 (defun part2 (numbers)
-  (loop for (a b c) on numbers
-        when c collect (+ a b c)))
+  (part1 (loop for (a b c) on numbers
+             when c collect (+ a b c))))

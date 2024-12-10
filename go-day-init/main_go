@@ -1,0 +1,31 @@
+package main
+
+import (
+	"log"
+	"github.com/shadesfear/aoc-lib-go/files"
+	// "github.com/shadesfear/aoc-lib-go/math"
+)
+
+func main() {
+	lines, err := files.ReadInputLines("input.txt")
+	if err != nil {
+		log.Fatal("Error reading input")
+	}
+	part1 := solvePart1(lines)
+	log.Println(part1)
+
+	part2 := solvePart2(lines)
+	log.Println(part2)
+}
+
+func solvePart1(lines []string) int {
+	res := 0
+
+	return res
+}
+
+func solvePart2(lines []string) int {
+	res := 0
+
+	return res
+}

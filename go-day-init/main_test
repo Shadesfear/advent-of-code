@@ -1,0 +1,24 @@
+package main
+
+import (
+	"testing"
+)
+
+func TestPart1(t *testing.T) {
+	input := ``
+	exp := 11
+	res := solvePart1(lines)
+	if result != extected {
+		t.Errorf("solvePart1() = %d, expected %d", result, extected)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	input := ``
+	exp := 31
+	res := solvePart2(lines)
+	if result != extected {
+		t.Errorf("solvePart2() = %d, expected %d", result, extected)
+	}
+}
+

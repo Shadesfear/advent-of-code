@@ -13,12 +13,12 @@ var MAIN string
 var TEST string
 
 func main() {
-	err := os.WriteFile("main.go", []byte(MAIN), 0644)
+	err := os.WriteFile("main.go", []byte(MAIN), 0o644)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = os.WriteFile("main_test.go", []byte(TEST), 0644)
+	err = os.WriteFile("main_test.go", []byte(TEST), 0o644)
 	if err != nil {
 		fmt.Println(err)
 	}

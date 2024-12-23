@@ -95,7 +95,7 @@ func Iter(x, n int) int {
 func solvePart2(numbers []int) int {
 	res := 0
 	for _, num := range numbers {
-		res += Iter(num, 75)
+		res += Iter(num, 10)
 	}
 	return res
 }

@@ -14,6 +14,12 @@ func (s *Set[T]) Add(item T) {
 	s.Items[item] = struct{}{}
 }
 
+func (s *Set[T]) AddM(items []T) {
+	for _, item := range items {
+		s.Add(item)
+	}
+}
+
 func (s *Set[T]) Remove(item T) {
 	delete(s.Items, item)
 }

@@ -30,6 +30,15 @@ func ToInt(input string) int {
 	return res
 }
 
+func ToInt64(input string) int64 {
+	res, err := strconv.Atoi(input)
+	if err != nil {
+		log.Printf("Got error with input %s", input)
+		panic(err)
+	}
+	return int64(res)
+}
+
 func PrettyPrintGrid(grid [][]rune) {
 	for _, row := range grid {
 		for _, cell := range row {

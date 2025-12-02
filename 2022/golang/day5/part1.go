@@ -34,7 +34,7 @@ func pop(stack []string) ([]string, string) {
 func main() {
 
 	cols := 9
-	filename := "input.txt"
+	filename := "../../inputs/day05.txt"
 
 	if test {
 		cols = 3

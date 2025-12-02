@@ -41,7 +41,7 @@ func overLapping(a, b int) bool {
 }
 
 func main()  {
-  content, _ := ioutil.ReadFile("input.txt")
+  content, _ := ioutil.ReadFile("../../inputs/day04.txt")
   str := string(content)
   str = strings.ReplaceAll(str, "\r", "")
   lines := strings.Split(str, "\n")

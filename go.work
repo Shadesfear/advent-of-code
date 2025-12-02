@@ -1,0 +1,9 @@
+go 1.25.4
+
+use (
+	./lib/go
+	./2024/go
+	./2025/go
+	./2022/golang
+	./go-day-init
+)

@@ -35,7 +35,7 @@ func main()  {
     priority[ch] = i + 27
   }
 
-  content, _ := ioutil.ReadFile("input.txt")
+  content, _ := ioutil.ReadFile("../../inputs/day03.txt")
   str := string(content)
   str = strings.ReplaceAll(str, "\r", "")
   backpacks := strings.Split(str, "\n")

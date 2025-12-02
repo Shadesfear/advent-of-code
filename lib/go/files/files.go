@@ -2,6 +2,7 @@ package files
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -78,4 +79,14 @@ func ParseInputToGrid(input string) ([][]rune, error) {
 	}
 
 	return grid, nil
+}
+
+func ReadDayInput(day int) (string, error) {
+	path := fmt.Sprintf("../../inputs/day%02d.txt", day)
+	return ReadInputFile(path)
+}
+
+func ReadDayInputLines(day int) ([]string, error) {
+	path := fmt.Sprintf("../../inputs/day%02d.txt", day)
+	return ReadInputLines(path)
 }

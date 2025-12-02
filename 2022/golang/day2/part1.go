@@ -7,7 +7,7 @@ import (
 )
 
 func main(){
-  content, _ := ioutil.ReadFile("input.txt")
+  content, _ := ioutil.ReadFile("../../inputs/day02.txt")
   str := string(content)
   str = strings.ReplaceAll(str, "\r", "")
 

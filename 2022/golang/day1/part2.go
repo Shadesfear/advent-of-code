@@ -10,7 +10,7 @@ import (
 
 func normal() {
 
-	content, _ := ioutil.ReadFile("input.txt")
+	content, _ := ioutil.ReadFile("../../inputs/day01.txt")
 	str := string(content)
 	str = strings.ReplaceAll(str, "\r", "")
 
@@ -46,7 +46,7 @@ func normal() {
 }
 
 func lists() {
-	content, _ := ioutil.ReadFile("input.txt")
+	content, _ := ioutil.ReadFile("../../inputs/day01.txt")
 	str := string(content)
 	str = strings.ReplaceAll(str, "\r", "")
 

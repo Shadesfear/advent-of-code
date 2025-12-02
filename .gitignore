@@ -1,0 +1,17 @@
+# Binaries
+go-day-init/main
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+go.work.sum
+
+# Advent of Code inputs (personal puzzle data)
+*/inputs/*.txt

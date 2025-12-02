@@ -11,7 +11,7 @@ import (
 type Point = datastructures.Point
 
 func main() {
-	lines, err := files.ReadInputLines("input.txt")
+	lines, err := files.ReadInputLines("../../inputs/day01.txt")
 	if err != nil {
 		log.Fatal("Error reading input")
 	}

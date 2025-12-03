@@ -1,0 +1,39 @@
+package main
+
+import (
+	"github.com/shadesfear/aoc-lib-go/files"
+	"log"
+	// "github.com/shadesfear/aoc-lib-go/math"
+
+	"github.com/shadesfear/aoc-lib-go/datastructures"
+)
+
+type Point = datastructures.Point
+
+func main() {
+	lines, err := files.ReadInputLines("../../inputs/day03.txt")
+	if err != nil {
+		log.Fatal("Error reading input")
+	}
+	part1 := solvePart1(lines)
+	log.Println(part1)
+
+	part2 := solvePart2(lines)
+	log.Println(part2)
+}
+
+func PowerBankLargest(s string) int {
+	for
+}
+
+func solvePart1(lines []string) int {
+	res := 0
+
+	return res
+}
+
+func solvePart2(lines []string) int {
+	res := 0
+
+	return res
+}

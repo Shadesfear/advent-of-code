@@ -1,5 +1,11 @@
 package math
 
+import "math"
+
+func Pow(a, b int) int {
+	return int(math.Pow(float64(a), float64(b)))
+}
+
 func GCD(a, b int) int {
 	aInner := a
 	bInner := b

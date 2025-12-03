@@ -9,7 +9,7 @@ import (
 
 	// "github.com/shadesfear/aoc-lib-go/str"
 
-	// "github.com/shadesfear/aoc-lib-go/math"
+	"github.com/shadesfear/aoc-lib-go/math"
 
 	"github.com/shadesfear/aoc-lib-go/datastructures"
 )
@@ -47,6 +47,29 @@ func PowerBankLargest(s string) int {
 	return largest
 }
 
+func recurse(s string, n int) int {
+	if n == 0 {
+		return 0
+	}
+
+	if len(s) == n {
+		return str.ToInt(s)
+	}
+
+	n1 := str.ToInt(s[0:1])
+
+	a := n1*(math.Pow(10, n-1)) + recurse(s[1:], n-1)
+	b := recurse(s[1:], n)
+	return max(a, b)
+}
+
+func PowerBankLargest12(s string) int {
+
+	largest := 0
+
+	return largest
+}
+
 func solvePart1(lines []string) int {
 	res := 0
 
@@ -60,6 +83,12 @@ func solvePart1(lines []string) int {
 
 func solvePart2(lines []string) int {
 	res := 0
+
+	for _, line := range lines {
+
+		line = strings.ReplaceAll(line, "\n", "")
+		res += recurse(line, 12)
+	}
 
 	return res
 }

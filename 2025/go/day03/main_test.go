@@ -27,6 +27,28 @@ func TestPowerBankLargest(t *testing.T) {
 	}
 }
 
+func TestRecurse(t *testing.T) {
+	tests := []struct {
+		in  string
+		out int
+	}{
+		{"987654321111111", 987654321111},
+		{"811111111111119", 811111111119},
+		{"234234234234278", 434234234278},
+		{"818181911112111", 888911112111},
+	}
+
+	for _, tt := range tests {
+
+		t.Run(tt.in, func(t *testing.T) {
+			ans := recurse(tt.in, 12)
+			if ans != tt.out {
+				t.Errorf("got %v, want %v", ans, tt.out)
+			}
+		})
+	}
+}
+
 func TestPart1(t *testing.T) {
 	input := `987654321111111
 811111111111119
@@ -43,11 +65,14 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	input := []string{
-		"",
-	}
-	exp := 0
-	res := solvePart2(input)
+	input := `987654321111111
+811111111111119
+234234234234278
+818181911112111`
+
+	lines := str.SplitLines(input)
+	exp := 3121910778619
+	res := solvePart2(lines)
 	if res != exp {
 		t.Errorf("solvePart2() = %d, exp %d", res, exp)
 	}

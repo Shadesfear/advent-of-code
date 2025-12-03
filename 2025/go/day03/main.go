@@ -1,8 +1,14 @@
 package main
 
 import (
-	"github.com/shadesfear/aoc-lib-go/files"
 	"log"
+	"strings"
+
+	"github.com/shadesfear/aoc-lib-go/files"
+	"github.com/shadesfear/aoc-lib-go/str"
+
+	// "github.com/shadesfear/aoc-lib-go/str"
+
 	// "github.com/shadesfear/aoc-lib-go/math"
 
 	"github.com/shadesfear/aoc-lib-go/datastructures"
@@ -23,11 +29,31 @@ func main() {
 }
 
 func PowerBankLargest(s string) int {
-	for
+
+	largest := 0
+	for i := 0; i < len(s)-1; i++ {
+		for j := i + 1; j < len(s); j++ {
+			si := string(s[i])
+			sj := string(s[j])
+			ns := si + sj
+			n := str.ToInt(ns)
+			if n > largest {
+				largest = n
+			}
+
+		}
+	}
+
+	return largest
 }
 
 func solvePart1(lines []string) int {
 	res := 0
+
+	for _, line := range lines {
+		line = strings.ReplaceAll(line, "\n", "")
+		res += PowerBankLargest(line)
+	}
 
 	return res
 }

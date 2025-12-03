@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"github.com/shadesfear/aoc-lib-go/str"
 )
 
 func TestPowerBankLargest(t *testing.T) {
@@ -26,14 +28,15 @@ func TestPowerBankLargest(t *testing.T) {
 }
 
 func TestPart1(t *testing.T) {
-	input := []string{
-		`987654321111111
+	input := `987654321111111
 811111111111119
 234234234234278
-818181911112111`,
-	}
+818181911112111`
+
+	lines := str.SplitLines(input)
+
 	exp := 357
-	res := solvePart1(input)
+	res := solvePart1(lines)
 	if res != exp {
 		t.Errorf("solvePart1() = %d, exp %d", res, exp)
 	}

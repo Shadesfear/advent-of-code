@@ -39,11 +39,24 @@ func ToInt64(input string) int64 {
 	return int64(res)
 }
 
-func PrettyPrintGrid(grid [][]rune) {
+func PrettyPrintGrid[T any](grid [][]T) {
 	for _, row := range grid {
 		for _, cell := range row {
-			fmt.Printf("%c ", cell) // Print each rune with a space
+			if r, ok := any(cell).(rune); ok {
+				fmt.Printf("%c", r)
+			} else {
+				fmt.Printf("%v", cell)
+			}
 		}
-		fmt.Println() // Move to the next line after each row
+		fmt.Println()
 	}
 }
+
+// func PrettyPrintGrid(grid [][]rune) {
+// 	for _, row := range grid {
+// 		for _, cell := range row {
+// 			fmt.Printf("%c ", cell) // Print each rune with a space
+// 		}
+// 		fmt.Println() // Move to the next line after each row
+// 	}
+// }

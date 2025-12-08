@@ -16,6 +16,8 @@ var Down = datastructures.Down
 var Left = datastructures.Left
 var Right = datastructures.Right
 
+const Splitter = '^'
+
 func main() {
 	lines, err := files.ReadInputLines("../../inputs/day07.txt")
 	if err != nil {
@@ -41,7 +43,7 @@ func part1(grid *datastructures.Grid[rune]) int {
 			if !grid.InBounds(movedBeam) {
 				continue
 			}
-			if grid.Get(movedBeam) == '^' {
+			if grid.Get(movedBeam) == Splitter {
 				seenLeft, seenRight := false, false
 				newLeft := movedBeam.MoveDir(Left)
 				newRight := movedBeam.MoveDir(Right)
@@ -54,12 +56,12 @@ func part1(grid *datastructures.Grid[rune]) int {
 						seenRight = true
 					}
 				}
-				if !seenLeft && grid.Get(newLeft) != '^' {
+				if !seenLeft && grid.Get(newLeft) != Splitter {
 					newBeams = append(newBeams, newLeft)
 					grid.Set(newLeft, '|')
 
 				}
-				if !seenRight && grid.Get(newRight) != '^' {
+				if !seenRight && grid.Get(newRight) != Splitter {
 					newBeams = append(newBeams, newRight)
 					grid.Set(newRight, '|')
 				}
@@ -91,41 +93,32 @@ func part1(grid *datastructures.Grid[rune]) int {
 }
 
 func part2(grid *datastructures.Grid[rune]) int {
-	timelines := 0
-
-	beams := datastructures.NewStack[Point]()
-	beams.Push(Point{X: grid.Cols / 2, Y: 0})
 	memo := map[Point]int{}
 
-	for !beams.IsEmpty() {
-		cur, ok := beams.Pop()
-		if !ok {
-			panic("WRong pop")
-		}
-		count, ok := memo[cur]
-		if ok {
-			timelines += count
-			continue
-		}
+	start := Point{X: grid.Cols / 2, Y: 0}
 
-		moved := cur.MoveDir(Down)
-		if !grid.InBounds(moved) {
-			timelines++
-			continue
-		}
+	return countTimeLines(grid, start, memo)
+}
 
-		if grid.Get(moved) == '^' {
-			leftBeam := moved.MoveDir(Left)
-			rightBeam := moved.MoveDir(Right)
-			beams.Push(leftBeam)
-			beams.Push(rightBeam)
-		} else {
-			beams.Push(moved)
-		}
-
+func countTimeLines(grid *datastructures.Grid[rune], cur Point, memo map[Point]int) int {
+	if count, ok := memo[cur]; ok {
+		return count
 	}
 
-	return timelines
+	moved := cur.MoveDir(Down)
+	if !grid.InBounds(moved) {
+		return 1
+	}
+
+	var result int
+
+	if grid.Get(moved) == Splitter {
+		result = countTimeLines(grid, moved.MoveDir(Left), memo) + countTimeLines(grid, moved.MoveDir(Right), memo)
+	} else {
+		result = countTimeLines(grid, moved, memo)
+	}
+	memo[cur] = result
+	return result
 }
 
 func solvePart1(lines []string) int {

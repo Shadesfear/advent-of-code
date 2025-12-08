@@ -118,7 +118,7 @@ func (p Point) Neighbours() []Point {
 	}
 }
 
-// Get 8 adjacent points (including diagonals)
+// Neighbors8 Get 8 adjacent points (including diagonals)
 func (p Point) Neighbors8() []Point {
 	offsets := [][]int{
 		{-1, -1},

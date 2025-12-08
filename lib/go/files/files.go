@@ -56,11 +56,11 @@ func ParseInputToInts(input string) ([]int, error) {
 	return nums, nil
 }
 
-func ParseInputToGrid(input string) ([][]rune, error) {
-	liness := strings.Split(input, "\n")
+func ParseLinesToGrid(input []string) ([][]rune, error) {
+
 	lines := []string{}
 
-	for _, line := range liness {
+	for _, line := range input {
 		if len(line) < 1 {
 			continue
 		}
@@ -79,6 +79,13 @@ func ParseInputToGrid(input string) ([][]rune, error) {
 	}
 
 	return grid, nil
+
+}
+
+func ParseInputToGrid(input string) ([][]rune, error) {
+	liness := strings.Split(input, "\n")
+	grid, err := ParseLinesToGrid(liness)
+	return grid, err
 }
 
 func ReadDayInput(day int) (string, error) {

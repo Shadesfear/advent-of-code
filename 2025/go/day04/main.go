@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/shadesfear/aoc-lib-go/files"
@@ -42,14 +43,32 @@ func main() {
 	// part2 := solvePart2(grid)
 	// log.Println(part2)
 
-	_, hist := solvePart2CaptureGrid(grid)
-	for _, g := range hist {
-		fmt.Print("\033[H\033[2J")
+	fmt.Print("\033[H\033[2J") // clear screen
+	fmt.Print("\033[?25l")     // hide cursor
+	str.PrettyPrintGrid(grid)  // initial state
+	_, _, toDels := solvePart2CaptureGrid(grid)
+	time.Sleep(2 * time.Second)
 
-		// fmt.Print("\033[H") // move to top-left, no clear
-		str.PrettyPrintGrid(g)
+	for _, toDels := range toDels {
+		var buf strings.Builder
+
+		for _, c := range toDels {
+			fmt.Fprintf(&buf, "\033[%d;%dH\033[31m@\033[0m", c[1]+1, c[0]+1)
+		}
+		fmt.Print(buf.String())
+
 		time.Sleep(300 * time.Millisecond)
+
+		buf.Reset()
+
+		// fmt.Print("\033[H\033[2J")
+		for _, c := range toDels {
+			fmt.Fprintf(&buf, "\033[%d;%dH%c", c[1]+1, c[0]+1, '.')
+		}
+		fmt.Print(buf.String())
+		time.Sleep(100 * time.Millisecond)
 	}
+	fmt.Print("\033[?25h") // show cursor
 }
 
 func rollsOfPaper(grid [][]rune, x, y int) int {
@@ -151,12 +170,13 @@ func copyGrid[T any](grid [][]T) [][]T {
 	return newGrid
 }
 
-func solvePart2CaptureGrid(grid [][]rune) (int, [][][]rune) {
+func solvePart2CaptureGrid(grid [][]rune) (int, [][][]rune, [][][]int) {
 	res := 0
 
 	rows, cols := len(grid), len(grid[0])
 
 	historic := [][][]rune{}
+	historicToDel := [][][]int{}
 
 	for {
 		var toDel = [][]int{}
@@ -177,6 +197,8 @@ func solvePart2CaptureGrid(grid [][]rune) (int, [][][]rune) {
 			}
 		}
 
+		historicToDel = append(historicToDel, toDel)
+
 		toDelCount := len(toDel)
 		if toDelCount == 0 {
 			break
@@ -190,5 +212,5 @@ func solvePart2CaptureGrid(grid [][]rune) (int, [][][]rune) {
 
 	}
 
-	return res, historic
+	return res, historic, historicToDel
 }

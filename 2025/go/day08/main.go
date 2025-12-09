@@ -17,22 +17,43 @@ import (
 
 type Point = datastructures.Point
 
-type Point3d struct {
+type JBox struct {
 	x, y, z int
 	circuit int
 }
 
-type PointPair struct {
-	a, b Point3d
+type Circuit struct {
+	JBoxes []JBox
 }
 
-var DistanceMatrix = map[PointPair]float64{}
+func (c Circuit) EuDist(other Circuit) float64 {
+	minDist := math.MaxFloat64
+	for _, jbox := range c.JBoxes {
+		for _, otherbox := range other.JBoxes {
+			dist := jbox.EuclideanDistance(otherbox)
+			if dist < minDist {
+				minDist = dist
+			}
+		}
+	}
+	return minDist
+}
 
-func (p Point3d) EuclideanDistance(other Point3d) float64 {
+type PointPair struct {
+	a, b JBox
+}
+
+type CircuitPair struct {
+	a, b Circuit
+}
+
+var DistanceMatrix = map[*CircuitPair]float64{}
+
+func (p JBox) EuclideanDistance(other JBox) float64 {
 	return math.Sqrt(math.Pow(float64(p.x-other.x), 2) + math.Pow(float64(p.y-other.y), 2) + math.Pow(float64(p.z-other.z), 2))
 }
 
-func (p Point3d) Equal(other Point3d) bool {
+func (p JBox) Equal(other JBox) bool {
 	return p.x == other.x && p.y == other.y && p.z == other.z
 }
 
@@ -48,12 +69,12 @@ func main() {
 	log.Println(part2)
 }
 
-func LinesToPoints(lines []string) []Point3d {
-	var points = []Point3d{}
+func LinesToPoints(lines []string) []JBox {
+	var points = []JBox{}
 
 	for _, line := range lines {
 		ns := strings.Split(line, ",")
-		points = append(points, Point3d{
+		points = append(points, JBox{
 			x:       str.ToInt(ns[0]),
 			y:       str.ToInt(ns[1]),
 			z:       str.ToInt(ns[2]),
@@ -65,8 +86,8 @@ func LinesToPoints(lines []string) []Point3d {
 
 }
 
-func closest(points []Point3d, cand Point3d) (Point3d, int) {
-	var close Point3d
+func closest(points []JBox, cand JBox) (JBox, int) {
+	var close JBox
 	var idx int
 	distance := math.MaxFloat64
 	for i, p := range points {
@@ -83,7 +104,7 @@ func closest(points []Point3d, cand Point3d) (Point3d, int) {
 	return close, idx
 }
 
-func part1(points []Point3d, connections int) int {
+func part1(points []JBox, connections int) int {
 	maxCircuit := 0
 	for range connections {
 		for i := 0; i < len(points); i++ {
@@ -131,28 +152,43 @@ func sortedPairs() []PointPair {
 	return pairs
 }
 
-func solvePart1(lines []string) int {
-
-	points := LinesToPoints(lines)
-	log.Println(len(points))
-
-	for i := 0; i < len(points); i++ {
-		for j := i + 1; j < len(points); j++ {
-			ppair := PointPair{
-				a: points[i],
-				b: points[j],
+func createDistanceMap(circuits []Circuit) {
+	for i := range circuits {
+		for j := i + 1; j < len(circuits); j++ {
+			a, b := circuits[i], circuits[j]
+			distance := a.EuDist(b)
+			cpair := CircuitPair{
+				a: a,
+				b: b,
 			}
-			distance := ppair.a.EuclideanDistance(ppair.b)
 
-			DistanceMatrix[ppair] = distance
+			DistanceMatrix[&cpair] = distance
 		}
 
 	}
 
-	log.Println(len(DistanceMatrix))
+}
+
+func initCircuits(points []JBox) []Circuit {
+	var circuits = make([]Circuit, len(points))
+	for _, point := range points {
+		circuits = append(circuits, Circuit{
+			JBoxes: []JBox{
+				point,
+			},
+		})
+	}
+	return circuits
+}
+
+func solvePart1(lines []string) int {
+
+	points := LinesToPoints(lines)
+	circuits := initCircuits(points)
+	createDistanceMap(circuits)
 	pairs := sortedPairs()
 
-	for _, pair := range pairs[:10]{
+	for _, pair := range pairs[:10] {
 		if pair.a.circuit == -1 && pair.b.circuit == -1 {
 
 		}

@@ -5,49 +5,25 @@ import (
 	"log"
 	"math"
 	"slices"
+	"sort"
 	"strings"
 
 	"github.com/shadesfear/aoc-lib-go/files"
 	"github.com/shadesfear/aoc-lib-go/str"
-
 	// "github.com/shadesfear/aoc-lib-go/math"
-
-	"github.com/shadesfear/aoc-lib-go/datastructures"
+	// "github.com/shadesfear/aoc-lib-go/datastructures"
 )
-
-type Point = datastructures.Point
 
 type JBox struct {
 	x, y, z int
-	circuit int
-}
-
-type Circuit struct {
-	JBoxes []JBox
-}
-
-func (c Circuit) EuDist(other Circuit) float64 {
-	minDist := math.MaxFloat64
-	for _, jbox := range c.JBoxes {
-		for _, otherbox := range other.JBoxes {
-			dist := jbox.EuclideanDistance(otherbox)
-			if dist < minDist {
-				minDist = dist
-			}
-		}
-	}
-	return minDist
+	parent  int
 }
 
 type PointPair struct {
-	a, b JBox
+	a, b int
 }
 
-type CircuitPair struct {
-	a, b Circuit
-}
-
-var DistanceMatrix = map[*CircuitPair]float64{}
+var DistanceMatrixPoint = map[PointPair]float64{}
 
 func (p JBox) EuclideanDistance(other JBox) float64 {
 	return math.Sqrt(math.Pow(float64(p.x-other.x), 2) + math.Pow(float64(p.y-other.y), 2) + math.Pow(float64(p.z-other.z), 2))
@@ -72,13 +48,13 @@ func main() {
 func LinesToPoints(lines []string) []JBox {
 	var points = []JBox{}
 
-	for _, line := range lines {
+	for i, line := range lines {
 		ns := strings.Split(line, ",")
 		points = append(points, JBox{
-			x:       str.ToInt(ns[0]),
-			y:       str.ToInt(ns[1]),
-			z:       str.ToInt(ns[2]),
-			circuit: -1,
+			x:      str.ToInt(ns[0]),
+			y:      str.ToInt(ns[1]),
+			z:      str.ToInt(ns[2]),
+			parent: i,
 		})
 	}
 
@@ -86,121 +62,164 @@ func LinesToPoints(lines []string) []JBox {
 
 }
 
-func closest(points []JBox, cand JBox) (JBox, int) {
-	var close JBox
-	var idx int
-	distance := math.MaxFloat64
-	for i, p := range points {
-		if p.Equal(cand) {
-			continue
-		}
-		newDistance := p.EuclideanDistance(cand)
-		if newDistance < distance {
-			distance = newDistance
-			close = p
-			idx = i
-		}
-	}
-	return close, idx
-}
-
-func part1(points []JBox, connections int) int {
-	maxCircuit := 0
-	for range connections {
-		for i := 0; i < len(points); i++ {
-			if points[i].circuit != -1 {
-				continue
-			}
-			close, idx := closest(points, points[i])
-
-			if close.circuit != -1 {
-				points[idx].circuit = close.circuit
-			} else {
-				points[i].circuit = maxCircuit
-				points[idx].circuit = maxCircuit
-				maxCircuit++
+func createDistanceMapJBox(JBoxes []JBox) {
+	for i := range JBoxes {
+		for j := i + 1; j < len(JBoxes); j++ {
+			pair := PointPair{
+				a: i,
+				b: j,
 			}
 
+			DistanceMatrixPoint[pair] = JBoxes[i].EuclideanDistance(JBoxes[j])
 		}
-	}
 
-	return maxCircuit
+	}
 }
 
-func minMap() PointPair {
-	var minPair PointPair
-	minDist := math.MaxFloat64
-
-	for pair, dist := range DistanceMatrix {
-		if dist < minDist {
-			minDist = dist
-			minPair = pair
-		}
+func find(boxes []JBox, i int) int {
+	for boxes[i].parent != i {
+		i = boxes[i].parent
 	}
-	return minPair
+	return i
 }
 
-func sortedPairs() []PointPair {
-	pairs := make([]PointPair, 0, len(DistanceMatrix))
-	for pair := range DistanceMatrix {
+func Union(boxes []JBox, a, b int) {
+	rootA := find(boxes, a)
+	rootB := find(boxes, b)
+	if rootA != rootB {
+		boxes[rootA].parent = rootB
+	}
+}
+
+func sortedPairsPoint() []PointPair {
+	pairs := make([]PointPair, 0, len(DistanceMatrixPoint))
+	for pair := range DistanceMatrixPoint {
 		pairs = append(pairs, pair)
 	}
 
 	slices.SortFunc(pairs, func(a, b PointPair) int {
-		return cmp.Compare(DistanceMatrix[a], DistanceMatrix[b])
+		return cmp.Compare(DistanceMatrixPoint[a], DistanceMatrixPoint[b])
 	})
 	return pairs
 }
 
-func createDistanceMap(circuits []Circuit) {
-	for i := range circuits {
-		for j := i + 1; j < len(circuits); j++ {
-			a, b := circuits[i], circuits[j]
-			distance := a.EuDist(b)
-			cpair := CircuitPair{
-				a: a,
-				b: b,
-			}
+func prod(xs []int) int {
+	res := xs[0]
+	for i := 1; i < len(xs); i++ {
+		res *= xs[i]
+	}
+	return res
+}
 
-			DistanceMatrix[&cpair] = distance
+func part1(boxes []JBox, n int) int {
+	pairs := sortedPairsPoint()
+
+	for _, pair := range pairs[:n] {
+		Union(boxes, pair.a, pair.b)
+	}
+
+	counts := map[int]int{}
+	for _, box := range boxes {
+		parent := find(boxes, box.parent)
+		if _, ok := counts[parent]; !ok {
+			counts[parent] = 0
+		}
+		counts[parent]++
+	}
+
+	c := []int{}
+
+	for val := range counts {
+		c = append(c, counts[val])
+	}
+
+	sort.Slice(c, func(i, j int) bool {
+		return c[i] > c[j]
+	})
+
+	return prod(c[:3])
+
+}
+
+func part2(boxes []JBox) int {
+	pairs := sortedPairsPoint()
+
+	var res int
+	for _, pair := range pairs {
+
+		Union(boxes, pair.a, pair.b)
+		parent := find(boxes, boxes[0].parent)
+		allTheSame := true
+		for _, box := range boxes {
+			boxParent := find(boxes, box.parent)
+			if boxParent != parent {
+				allTheSame = false
+			}
+		}
+
+		if allTheSame {
+			res = boxes[pair.a].x * boxes[pair.b].x
+			break
 		}
 
 	}
 
-}
-
-func initCircuits(points []JBox) []Circuit {
-	var circuits = make([]Circuit, len(points))
-	for _, point := range points {
-		circuits = append(circuits, Circuit{
-			JBoxes: []JBox{
-				point,
-			},
-		})
-	}
-	return circuits
+	return res
 }
 
 func solvePart1(lines []string) int {
 
-	points := LinesToPoints(lines)
-	circuits := initCircuits(points)
-	createDistanceMap(circuits)
-	pairs := sortedPairs()
-
-	for _, pair := range pairs[:10] {
-		if pair.a.circuit == -1 && pair.b.circuit == -1 {
-
-		}
-	}
-
-	res := part1(points, 10)
-
-	return res
+	boxes := LinesToPoints(lines)
+	createDistanceMapJBox(boxes)
+	return part1(boxes, 1000)
 }
 
 func solvePart2(lines []string) int {
-	res := 0
+	boxes := LinesToPoints(lines)
+	createDistanceMapJBox(boxes)
 
-	return res
+	return part2(boxes)
+}
+
+func findCircuitNaive(circuits [][]int, box int) int {
+	for i, circuit := range circuits {
+		for _, b := range circuit {
+			if b == box {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+func part1Naive(boxes []JBox, n int) int {
+	pairs := sortedPairsPoint()
+
+	circuits := make([][]int, len(boxes))
+	for i := range boxes {
+		circuits[i] = []int{i}
+	}
+
+	for _, pair := range pairs[:n] {
+		circuitA := findCircuitNaive(circuits, pair.a)
+		circuitB := findCircuitNaive(circuits, pair.b)
+
+		if circuitA != circuitB {
+			circuits[circuitA] = append(circuits[circuitA], circuits[circuitB]...)
+			circuits[circuitB] = []int{}
+		}
+	}
+
+	sizes := []int{}
+	for _, circuit := range circuits {
+		if len(circuit) > 0 {
+			sizes = append(sizes, len(circuit))
+		}
+	}
+
+	sort.Slice(sizes, func(i, j int) bool {
+		return sizes[i] > sizes[j]
+	})
+
+	return prod(sizes[:3])
 }

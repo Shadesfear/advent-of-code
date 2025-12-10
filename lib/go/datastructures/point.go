@@ -139,6 +139,10 @@ func (p Point) Neighbors8() []Point {
 	return neighbors
 }
 
+func (p Point) InBoundsA(minx, maxx, miny, maxy int) bool {
+	return p.X >= minx && p.X < maxx && p.Y >= miny && p.Y < maxy
+}
+
 func (p Point) InBounds(rows, cols int) bool {
 	return p.X >= 0 && p.X < cols && p.Y >= 0 && p.Y < rows
 }

@@ -6,12 +6,8 @@ import (
 
 	"github.com/shadesfear/aoc-lib-go/files"
 
-	// "github.com/shadesfear/aoc-lib-go/math"
-
 	"github.com/shadesfear/aoc-lib-go/datastructures"
 )
-
-type Point = datastructures.Point
 
 func parse(lines []string) map[string][]string {
 	tree := map[string][]string{}
@@ -30,8 +26,7 @@ func parse(lines []string) map[string][]string {
 func solvePart1(lines []string) int {
 	res := 0
 
-	tree := parse(lines)
-
+	graph := parse(lines)
 	q := datastructures.NewQueue[string]()
 	q.Enqueue("you")
 
@@ -42,7 +37,7 @@ func solvePart1(lines []string) int {
 			res++
 		}
 
-		for _, next := range tree[cur] {
+		for _, next := range graph[cur] {
 			q.Enqueue(next)
 		}
 
@@ -51,36 +46,46 @@ func solvePart1(lines []string) int {
 	return res
 }
 
+type MemKey struct {
+	node string
+	dac  bool
+	fft  bool
+}
+
+func recur(cur string, graph map[string][]string, mem map[MemKey]int, dac, fft bool) int {
+
+	if cur == "out" && dac && fft {
+		return 1
+	}
+
+	memkey := MemKey{cur, dac, fft}
+
+	if val, ok := mem[memkey]; ok {
+		return val
+	}
+
+	if cur == "dac" {
+		dac = true
+	}
+	if cur == "fft" {
+		fft = true
+	}
+
+	res := 0
+	for _, next := range graph[cur] {
+		res += recur(next, graph, mem, dac, fft)
+	}
+	mem[memkey] = res
+
+	return res
+}
+
 func solvePart2(lines []string) int {
 	res := 0
 
-	tree := parse(lines)
+	graph := parse(lines)
 
-	s := datastructures.NewStack[string]()
-	s.Push("svr")
-
-	fft, dac := false, false
-	for !s.IsEmpty() {
-		cur, _ := s.Pop()
-		if cur == "fft" {
-			fft = true
-		}
-		if cur == "dac" {
-			dac = true
-		}
-
-		if cur == "out" {
-			if fft && dac {
-				res++
-			}
-			fft, dac = false, false
-		}
-
-		for _, next := range tree[cur] {
-			s.Push(next)
-		}
-
-	}
+	res = recur("svr", graph, map[MemKey]int{}, false, false)
 
 	return res
 }

@@ -8,6 +8,7 @@ Advent of Code solutions organized by year and language:
 - `2024/go/dayXX/` and `2025/go/dayXX/` - Go solutions (current primary language)
 - `2022/golang/` and `2022/rust-aoc/` - Mixed Go and Rust from 2022
 - `2021/` - Common Lisp solutions
+- `2015/elisp/` - Emacs Lisp solutions (`dayXX.el`, ERT tests in `dayXX-test.el`)
 - `lib/go/` - Shared Go library (`github.com/shadesfear/aoc-lib-go`)
 - `YYYY/inputs/dayXX.txt` - Puzzle inputs per year
 
@@ -22,6 +23,11 @@ go test -v -run TestPart1 ./2025/go/day03/
 
 # Run solution
 go run ./2025/go/day03/
+
+# 2015 elisp (from 2015/elisp)
+make test            # all days
+make test DAY=01     # one day
+make run DAY=01
 
 # Initialize new day (from go-day-init directory)
 cd go-day-init && go run . && cd -

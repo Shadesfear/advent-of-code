@@ -1,11 +1,11 @@
 EMACS ?= emacs
 BATCH = $(EMACS) -Q --batch -L .
-TESTS = $(if $(DAY),day$(DAY)-test.el,$(wildcard day*-test.el))
+DAYS = $(if $(DAY),day$(DAY).el,$(wildcard day[0-9][0-9].el))
 
 .PHONY: test run
 
 test:
-	$(BATCH) $(addprefix -l ,$(TESTS)) -f ert-run-tests-batch-and-exit
+	$(BATCH) $(addprefix -l ,$(DAYS)) -f ert-run-tests-batch-and-exit
 
 run:
 	@test -n "$(DAY)" || (echo "usage: make run DAY=01" && exit 1)

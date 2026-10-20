@@ -13,9 +13,9 @@
 
 (defun aoc-run (day part1 part2)
   (let ((input (aoc-read-input day)))
-    (princ (format "Part 1: %s\nPart 2: %s\n"
-                   (funcall part1 input)
-                   (funcall part2 input)))))
+    (message "Part 1: %s\nPart 2: %s"
+             (funcall part1 input)
+             (funcall part2 input))))
 
 (provide 'aoc)
 ;;; aoc.el ends here

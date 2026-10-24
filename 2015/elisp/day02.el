@@ -1,8 +1,8 @@
-;;; day02.el --- I Was Told There Would Be No Math -*- lexical-binding: t; -*-
+;;; .el --- I Was Told There Would Be No Math -*- lexical-binding: t; -*-
 
 (require 'ert)
 (require 'aoc (expand-file-name "aoc" (file-name-directory
-                                (or load-file-name buffer-file-name))))
+                                       (or load-file-name buffer-file-name))))
 
 (defun day02-parse (input)
   (seq-map (lambda (line)
